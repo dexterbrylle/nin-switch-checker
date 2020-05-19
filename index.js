@@ -2,13 +2,17 @@ require('dotenv').config();
 
 const axios = require('axios').default;
 const Nexmo = require('nexmo');
-const bot = require('./discord');
+const Discord = require('discord.js');
+const bot = new Discord.Client();
 
 const {
   NEXMO_API_KEY,
   NEXMO_API_SECRET,
-  SMS_RECIPIENT
+  SMS_RECIPIENT,
+  DISCORD_BOT_TOKEN
 } = process.env;
+
+bot.login(DISCORD_BOT_TOKEN);
 
 const nexmo = new Nexmo({
   apiKey: NEXMO_API_KEY,
@@ -23,11 +27,7 @@ function sendSMS (store, item) {
   nexmo.message.sendSms(from, to, text);
 }
 
-function logInStock (store, item) {
-  console.log(`INSTOCK: ${store}: ${item}`);
-}
-
-function logOutOfStock (store, item) {
+function botNoStockMessage (store, item) {
   bot.on('ready', () => {
     bot.channels
       .fetch('712312904782708736')
@@ -44,7 +44,33 @@ function logOutOfStock (store, item) {
         console.log(err);
       });
   });
-  console.log(`OUTOFSTOCK: ${store}: ${item}`);
+}
+
+function botInStockMessage (store, item) {
+  bot.on('ready', () => {
+    bot.channels
+      .fetch('712312904782708736')
+      .then(channel => {
+        channel.send(`INSTOCK: ${store}: ${item}`)
+          .then(msg => {
+            console.log(`INSTOCK: ${store}: ${item}`);
+          })
+          .catch(err => {
+            console.error(err.message);
+          });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  });
+}
+
+function logInStock (store, item) {
+  botInStockMessage(store, item);
+}
+
+function logOutOfStock (store, item) {
+  botNoStockMessage(store, item);
 }
 
 function logError (err, store, item) {
