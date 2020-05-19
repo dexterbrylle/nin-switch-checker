@@ -114,6 +114,6 @@ checkStore({
   searchTag: '<link itemprop="availability" href="http://schema.org/InStock">',
   store: 'Gameline',
   item: 'Nintendo Switch Console Pokemon Eevee'
-})
+});
 
 console.log(new Date());
