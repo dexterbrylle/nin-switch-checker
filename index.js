@@ -1,10 +1,8 @@
 require('dotenv').config();
 
 const axios = require('axios').default;
-const fetch = require('node-fetch');
 const Nexmo = require('nexmo');
-
-const DYNO_URL = 'https://nin-switch-check.herokuapp.com/';
+const bot = require('./discord');
 
 const {
   NEXMO_API_KEY,
@@ -30,7 +28,22 @@ function logInStock (store, item) {
 }
 
 function logOutOfStock (store, item) {
-  // sendSMS(store, item);
+  bot.on('ready', () => {
+    bot.channels
+      .fetch('712312904782708736')
+      .then(channel => {
+        channel.send(`OUTOFSTOCK: ${store}: ${item}`)
+          .then(msg => {
+            console.log(`OUTOFSTOCK: ${store}: ${item}`);
+          })
+          .catch(err => {
+            console.error(err.message);
+          });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  });
   console.log(`OUTOFSTOCK: ${store}: ${item}`);
 }
 
