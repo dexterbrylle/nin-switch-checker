@@ -92,9 +92,10 @@ function checkStore ({ url, searchTag, store, item }) {
         logOutOfStock(store, item);
         return;
       }
-
-      sendSMS(store, item);
       logInStock(store, item);
+      if (store === 'Datablitz' || store === 'Gameline') {
+        sendSMS(store, item);
+      }
     })
     .catch((err) => {
       logError(err, store, item);
