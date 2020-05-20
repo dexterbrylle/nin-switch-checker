@@ -19,10 +19,10 @@ const nexmo = new Nexmo({
   apiSecret: NEXMO_API_SECRET
 });
 
-function sendSMS (store, item) {
+function sendSMS (store, item, price) {
   const from = 'N. Switch Reminder';
   const to = SMS_RECIPIENT;
-  const text = `${item} in-stock at ${store}`;
+  const text = `${item} in-stock at ${store} - P${price}`;
 
   nexmo.message.sendSms(from, to, text);
 }
@@ -46,14 +46,14 @@ function botNoStockMessage (store, item) {
   });
 }
 
-function botInStockMessage (store, item) {
+function botInStockMessage (store, item, price) {
   bot.on('ready', () => {
     bot.channels
       .fetch('712312904782708736')
       .then(channel => {
-        channel.send(`INSTOCK: ${store}: ${item}`)
+        channel.send(`INSTOCK: ${store}: ${item} - P${price}`)
           .then(msg => {
-            console.log(`INSTOCK: ${store}: ${item}`);
+            console.log(`INSTOCK: ${store}: ${item} - P${price}`);
           })
           .catch(err => {
             console.error(err.message);
@@ -65,19 +65,19 @@ function botInStockMessage (store, item) {
   });
 }
 
-function logInStock (store, item) {
-  botInStockMessage(store, item);
+function logInStock (store, item, price) {
+  botInStockMessage(store, item, price);
 }
 
-function logOutOfStock (store, item) {
-  console.log(`OUTOFSTOCK: ${store}: ${item}`);
+function logOutOfStock (store, item, price) {
+  console.log(`OUTOFSTOCK: ${store}: ${item} - P${price}`);
 }
 
 function logError (err, store, item) {
   console.error(`ERROR: ${store}: ${item}: ${err.message}`);
 }
 
-function checkStore ({ url, searchTag, store, item }) {
+function checkStore ({ url, searchTag, store, item, itemPrice }) {
   axios.get(url)
     .then((resp) => {
       if (resp.status !== 200) {
@@ -88,87 +88,100 @@ function checkStore ({ url, searchTag, store, item }) {
         .replace(/>[\s]+</g, '><')
         .replace(/[\s]+/g, ' ');
 
+      const price = itemPrice.toString().replace((/((\D+\W))/g), '');
+
       if (!html.includes(searchTag)) {
-        logOutOfStock(store, item);
+        logOutOfStock(store, item, price);
         return;
       }
-      logInStock(store, item);
+      logInStock(store, item, price);
       if (store === 'Datablitz' || store === 'Gameline') {
-        sendSMS(store, item);
+        sendSMS(store, item, price);
       }
     })
     .catch((err) => {
       logError(err, store, item);
     });
 }
+
 checkStore({
   url: 'https://ecommerce.datablitz.com.ph/collections/nintendo-switch-console/products/nintendo-switch-console-gray',
   searchTag: '<button type="submit" class="product-form__add-button button button--primary" data-action="add-to-cart">Add to cart</button>',
   store: 'Datablitz',
-  item: 'Nintendo Switch Console Grey'
+  item: 'Nintendo Switch Console Grey',
+  itemPrice: '<span class="price">₱18,995</span>'
 });
 
 checkStore({
   url: 'https://ecommerce.datablitz.com.ph/collections/nintendo-switch-console/products/nintendo-switch-console-neon-red-blue-refresh',
   searchTag: '<button type="submit" class="product-form__add-button button button--primary" data-action="add-to-cart">Add to cart</button>',
   store: 'Datablitz',
-  item: 'Nintendo Switch Console Neon'
+  item: 'Nintendo Switch Console Neon',
+  itemPrice: '<span class="price">₱18,995</span>'
 });
 
 checkStore({
   url: 'http://gameone.ph/nintendo/nintendo-hardware/nintendo-switch-joy-con-gray-v2-with-labo-robot-kit.html',
   searchTag: '<button type="submit" title="Add to Cart" class="action primary tocart" id="product-addtocart-button"><span>Add to Cart</span></button>',
   store: 'Game One',
-  item: 'Nintendo Switch Console Grey'
+  item: 'Nintendo Switch Console Grey',
+  itemPrice: '<span class="price">₱24,995.00</span>'
 });
 
 checkStore({
   url: 'http://gameone.ph/nintendo/nintendo-hardware/nintendo-switch-neon-joy-con-v2-with-labo-robot-kit-bundle.html',
   searchTag: '<button type="submit" title="Add to Cart" class="action primary tocart" id="product-addtocart-button"><span>Add to Cart</span></button>',
   store: 'Game One',
-  item: 'Nintendo Switch Console Neon'
+  item: 'Nintendo Switch Console Neon',
+  itemPrice: '<span class="price">₱24,995.00</span>'
 });
 
 checkStore({
   url: 'https://gameline.ph/collections/switch-console/products/nintendo-switch-v1-unit-pokemon-lets-go-pikachu-bundle-mde?variant=31737759465521',
   searchTag: '<link itemprop="availability" href="http://schema.org/InStock">',
   store: 'Gameline',
-  item: 'Nintendo Switch Console Pokemon Pikachu'
+  item: 'Nintendo Switch Console Pokemon Pikachu',
+  itemPrice: '<span class="visually-hidden">₱20,995.00</span>'
 });
 
 checkStore({
   url: 'https://gameline.ph/collections/switch-console/products/nintendo-switch-v1-unit-pokemon-eevee-pikachu-bundle-mde?variant=31737759531057',
   searchTag: '<link itemprop="availability" href="http://schema.org/InStock">',
   store: 'Gameline',
-  item: 'Nintendo Switch Console Pokemon Eevee'
+  item: 'Nintendo Switch Console Pokemon Eevee',
+  itemPrice: '<span class="visually-hidden">₱20,995.00</span>'
 });
 
 checkStore({
   url: 'https://ecommerce.datablitz.com.ph/collections/nintendo-switch-console/products/nintendo-switch-console-animal-crossing-new-horizons-edition',
   searchTag: '<button type="submit" class="product-form__add-button button button--primary" data-action="add-to-cart">Add to cart</button>',
   store: 'Datablitz',
-  item: 'Switch Console ACNH'
+  item: 'Nintendo Switch Console ACNH',
+  itemPrice: '<span class="price">₱19,495</span>'
 });
 
 checkStore({
   url: 'https://www.lazada.com.ph/products/nintendo-switch-unit-version-2-gray-console-with-super-smash-bros-ultimate-bundle-i719188137-s2097942405.html',
   searchTag: '"availability":"https://schema.org/InStock"',
   store: 'Toy Kingdom',
-  item: 'Switch Console Grey'
+  item: 'Switch Console Grey',
+  itemPrice: '<span class=" pdp-price pdp-price_type_normal pdp-price_color_orange pdp-price_size_xl">₱23,999.75</span>'
 });
 
 checkStore({
   url: 'https://www.lazada.com.ph/products/nintendo-switch-unit-version-2-neon-blue-and-neon-red-with-smash-bros-ultimate-bundle-i719244263-s2097998997.html',
   searchTag: '"availability":"https://schema.org/InStock"',
   store: 'Toy Kingdom',
-  item: 'Switch Console Neon'
+  item: 'Nintendo Switch Console Neon',
+  itemPrice: '<span class=" pdp-price pdp-price_type_normal pdp-price_color_orange pdp-price_size_xl">₱23,999.75</span>'
 });
 
 checkStore({
   url: 'https://www.lazada.com.ph/products/nintendo-switch-animal-crossing-new-horizons-edition-with-just-dance-2020-bundle-i719222678-s2098126745.html',
   searchTag: '"availability":"https://schema.org/InStock"',
   store: 'Toy Kingdom',
-  item: 'Switch Console ACNH'
+  item: 'Nintendo Switch Console ACNH',
+  itemPrice: '<span class=" pdp-price pdp-price_type_normal pdp-price_color_orange pdp-price_size_xl">₱23,999.75</span>'
 });
 
 console.log(new Date());
