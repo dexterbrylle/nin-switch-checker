@@ -142,4 +142,32 @@ checkStore({
   item: 'Nintendo Switch Console Pokemon Eevee'
 });
 
+checkStore({
+  url: 'https://ecommerce.datablitz.com.ph/collections/nintendo-switch-console/products/nintendo-switch-console-animal-crossing-new-horizons-edition',
+  searchTag: '<button type="submit" class="product-form__add-button button button--primary" data-action="add-to-cart">Add to cart</button>',
+  store: 'Datablitz',
+  item: 'Switch Console ACNH'
+});
+
+checkStore({
+  url: 'https://www.lazada.com.ph/products/nintendo-switch-unit-version-2-gray-console-with-super-smash-bros-ultimate-bundle-i719188137-s2097942405.html',
+  searchTag: '"availability":"https://schema.org/InStock"',
+  store: 'Toy Kingdom',
+  item: 'Switch Console Grey'
+});
+
+checkStore({
+  url: 'https://www.lazada.com.ph/products/nintendo-switch-unit-version-2-neon-blue-and-neon-red-with-smash-bros-ultimate-bundle-i719244263-s2097998997.html',
+  searchTag: '"availability":"https://schema.org/InStock"',
+  store: 'Toy Kingdom',
+  item: 'Switch Console Neon'
+});
+
+checkStore({
+  url: 'https://www.lazada.com.ph/products/nintendo-switch-animal-crossing-new-horizons-edition-with-just-dance-2020-bundle-i719222678-s2098126745.html',
+  searchTag: '"availability":"https://schema.org/InStock"',
+  store: 'Toy Kingdom',
+  item: 'Switch Console ACNH'
+});
+
 console.log(new Date());
