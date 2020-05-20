@@ -88,7 +88,10 @@ function checkStore ({ url, searchTag, store, item, itemPrice }) {
         .replace(/>[\s]+</g, '><')
         .replace(/[\s]+/g, ' ');
 
-      const price = itemPrice.toString().replace((/((\D+\W))/g), '');
+      let price = itemPrice.toString().replace((/((\D+\W))/g), '');
+      if (price.length > 9) {
+        price = price.slice(-9);
+      }
 
       if (!html.includes(searchTag)) {
         logOutOfStock(store, item, price);
@@ -165,7 +168,7 @@ checkStore({
   searchTag: '"availability":"https://schema.org/InStock"',
   store: 'Toy Kingdom',
   item: 'Switch Console Grey',
-  itemPrice: '<span class=" pdp-price pdp-price_type_normal pdp-price_color_orange pdp-price_size_xl">₱23,999.75</span>'
+  itemPrice: '<span class=" pdp-price pdp-price_type_normal pdp-price_color_orange pdp-price_size_xl" data-spm-anchor-id="a2o4l.pdp.0.i2.b1e02d6b9ezFvF">₱23,999.75</span>'
 });
 
 checkStore({
@@ -173,7 +176,7 @@ checkStore({
   searchTag: '"availability":"https://schema.org/InStock"',
   store: 'Toy Kingdom',
   item: 'Nintendo Switch Console Neon',
-  itemPrice: '<span class=" pdp-price pdp-price_type_normal pdp-price_color_orange pdp-price_size_xl">₱23,999.75</span>'
+  itemPrice: '<span class=" pdp-price pdp-price_type_normal pdp-price_color_orange pdp-price_size_xl" data-spm-anchor-id="a2o4l.pdp.0.i0.5fbc5693UrvjeC">₱23,999.75</span>'
 });
 
 checkStore({
@@ -181,7 +184,7 @@ checkStore({
   searchTag: '"availability":"https://schema.org/InStock"',
   store: 'Toy Kingdom',
   item: 'Nintendo Switch Console ACNH',
-  itemPrice: '<span class=" pdp-price pdp-price_type_normal pdp-price_color_orange pdp-price_size_xl">₱23,999.75</span>'
+  itemPrice: '<span class=" pdp-price pdp-price_type_normal pdp-price_color_orange pdp-price_size_xl" data-spm-anchor-id="a2o4l.pdp.0.i0.32bda44dx4glFr">₱23,999.75</span>'
 });
 
 console.log(new Date());
