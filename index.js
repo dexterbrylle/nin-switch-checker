@@ -70,7 +70,7 @@ function logInStock (store, item) {
 }
 
 function logOutOfStock (store, item) {
-  botNoStockMessage(store, item);
+  console.log(`OUTOFSTOCK: ${store}: ${item}`);
 }
 
 function logError (err, store, item) {
